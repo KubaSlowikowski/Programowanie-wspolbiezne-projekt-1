@@ -8,12 +8,12 @@ import static com.company.Helpers.partition;
 
 public class QuickSortFJPool extends RecursiveAction {
 
-    private final ForkJoinPool pool; //niepotrzebne
     private final int[] arr;
     private int low, high;
+    private static final int THRESHOLD = 10;
+    private final QuickSortSingle quickSortSingle = new QuickSortSingle();
 
-    public QuickSortFJPool(ForkJoinPool pool, int[] arr, int low, int high) {
-        this.pool = pool;
+    public QuickSortFJPool(int[] arr, int low, int high) {
         this.arr = arr;
         this.low = low;
         this.high = high;
@@ -21,11 +21,17 @@ public class QuickSortFJPool extends RecursiveAction {
 
     @Override
     protected void compute() {
-        if (high > low) {
-            int i = partition(arr, low, high);
-            QuickSortFJPool quickSortLow = new QuickSortFJPool(pool, arr, low, i - 1);
-            QuickSortFJPool quickSortHigh = new QuickSortFJPool(pool, arr, i + 1, high);
+        if (high > (low + THRESHOLD)) {
+            int i = partition(arr, low, high); // pivot
+
+            System.out.println(("Processed by "
+                    + Thread.currentThread().getName()));
+
+            QuickSortFJPool quickSortLow = new QuickSortFJPool(arr, low, i - 1);
+            QuickSortFJPool quickSortHigh = new QuickSortFJPool(arr, i + 1, high);
             ForkJoinTask.invokeAll(quickSortLow, quickSortHigh);
+        } else if (high > low) {
+            quickSortSingle.quickSort(arr, low, high);
         }
     }
 }
