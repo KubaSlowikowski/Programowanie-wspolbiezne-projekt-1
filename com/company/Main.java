@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 
 public class Main {
 
-    private static final int N = 10000;
+    private static final int N = 50000;
     private static final int BOUND = 1000;
 
     private static void printArray(int[] arr, int n) {
@@ -23,10 +23,10 @@ public class Main {
 
 //        for (int i = 0; i < 1; i++) {
 
-            int[] randomIntsArray = IntStream.generate(() -> new Random().nextInt(BOUND)).limit(N).toArray();
-            int[] copy = Arrays.copyOf(randomIntsArray, N);
-            int[] copy2 = Arrays.copyOf(randomIntsArray, N);
-            List<Integer> unsorted = Arrays.stream(randomIntsArray).boxed().collect(Collectors.toList());
+        int[] randomIntsArray = IntStream.generate(() -> new Random().nextInt(BOUND)).limit(N).toArray();
+        int[] copy = Arrays.copyOf(randomIntsArray, N);
+        int[] copy2 = Arrays.copyOf(randomIntsArray, N);
+        List<Integer> unsorted = Arrays.stream(randomIntsArray).boxed().collect(Collectors.toList());
 
 //        printArray(randomIntsArray, N);
 
@@ -57,19 +57,18 @@ public class Main {
 ////        System.out.println("Result: " + result);
 //            System.out.println("Executor thread time: \t" + executorThreadTime);
 
-            long startTime4 = System.nanoTime();
+        long startTime4 = System.nanoTime();
 
-//            ForkJoinPool forkJoinPool = new ForkJoinPool(20);
-            ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
-            QuickSortFJPool quickSortFJPool = new QuickSortFJPool(copy2, 0, copy2.length - 1);
-//            quickSortFJPool.compute();
-            forkJoinPool.invoke(quickSortFJPool);
+        ForkJoinPool forkJoinPool = new ForkJoinPool(5);
+        QuickSortForkJoinPool quickSortForkJoinPool = new QuickSortForkJoinPool(copy2, 0, copy2.length - 1);
+//        quickSortForkJoinPool.compute();
+        forkJoinPool.invoke(quickSortForkJoinPool);
 
-            long endTime4 = System.nanoTime();
-            long fJTime = endTime4 - startTime4;
+        long endTime4 = System.nanoTime();
+        long fJTime = endTime4 - startTime4;
 
-            System.out.println("Fork Join Time: \t\t" + fJTime);
-            System.out.println();
+        System.out.println("Fork Join Time: \t\t" + fJTime);
+        System.out.println();
 //        }
 //        printArray(copy2, N);
     }
